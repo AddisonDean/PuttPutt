@@ -44,9 +44,15 @@ class Windmill
     if ball_y <= @bottom_edge && ball_y >= @top_edge
       @y_delta = 1.0 - ((ball_y - 260.0)/ 40.0)
       if ball_x >= ((@left_edge - 10) + @y_delta * 50) && ball_x <= ((@left_edge + 50) + @y_delta * 50)
+        # I want this to perform the same calculations in ball.rb that hitting the sides of the field does,
+        # But that keeps glitching. I'll work on it.
+        $angle = 300.0
         return 'left'
       end
-      if ball_x >= ((@right_edge - 50) + @y_delta * 50) && ball_x <= ((@right_edge + 10) + @y_delta * 50)
+      if ball_x >= ((@right_edge - 50) + @y_delta * 50) && ball_x <= ((@right_edge + 25) + @y_delta * 50)
+        # I want this to perform the same calculations in ball.rb that hitting the sides of the field does,
+        # But that keeps glitching. I'll work on it.
+        $angle = 120.0
         return 'right'
       end
     end

@@ -38,18 +38,21 @@ class Ball
     increment = 1
     velocity_scale = 10
     distance = increment * velocity_scale
+    # puts $angle
     if @power > 0
+      @x += Gosu.offset_x($angle, distance)
+      @y += Gosu.offset_y($angle, distance)
       @y_delta = 1.0 - ((@y - 100.0)/ 380.0)
 
-      if @x <= (@y_delta * 50.0) + 15.0 or
-          Windmill.detect_collision(windmill_x, windmill_y, @x, @y) == 'right' or
-          Pacman.detect_collision(pacman_x, pacman_y, @x, @y) == 'right'
+      if @x <= (@y_delta * 50.0) + 15.0 #or
+          #Windmill.detect_collision(windmill_x, windmill_y, @x, @y) == 'right' or
+          #Pacman.detect_collision(pacman_x, pacman_y, @x, @y) == 'right'
         $angle = 360.0 - $angle
       end
 
-      if @x >= (window_width - 15.0) - (@y_delta * 50) or
-          Windmill.detect_collision(windmill_x, windmill_y, @x, @y) == 'left' or
-          Pacman.detect_collision(pacman_x, pacman_y, @x, @y) == 'left'
+      if @x >= (window_width - 15.0) - (@y_delta * 50) #or
+          #Windmill.detect_collision(windmill_x, windmill_y, @x, @y) == 'left' or
+          #Pacman.detect_collision(pacman_x, pacman_y, @x, @y) == 'left'
         $angle = 360.0 - $angle
       end
 
@@ -66,9 +69,6 @@ class Ball
           Pacman.detect_collision(pacman_x, pacman_y, @x, @y) == 'top'
         $angle = 180.0 - $angle
       end
-
-      @x += Gosu.offset_x($angle, distance)
-      @y += Gosu.offset_y($angle, distance)
       @power -= increment
     end
   end
