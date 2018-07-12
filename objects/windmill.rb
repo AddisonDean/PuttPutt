@@ -4,10 +4,10 @@ class Windmill
 
   def initialize(x, y)
     @x, @y = x, y
-    @image = Gosu::Image.new('resources/images/windmill_color.png')
+    @image = Gosu::Image.new('resources/images/windmill.png')
   end
 
-  def self.calculate(x, y)
+  def calculate(x, y)
     @left_edge = x - 75.0
     @right_edge = x + 50.0
     @top_edge = y + 110.0
@@ -19,25 +19,25 @@ class Windmill
   end
 
   def normal_mode
-    @image = Gosu::Image.new('resources/images/windmill_color.png')
+    @image = Gosu::Image.new('resources/images/windmill.png')
   end
 
   def go_invisible
     @image = Gosu::Image.new('resources/images/blank.png')
   end
 
-  def self.detect_collision(x, y, ball_x, ball_y)
+  def detect_collision(x, y, ball_x, ball_y)
     calculate(x, y)
 
     if @left_edge <= ball_x && @right_edge >= ball_x
       if (@bottom_edge - 3) <= ball_y && (@bottom_edge + 5) >= ball_y
-        return 'bottom'
+        $angle = 180.0 - $angle
       end
     end
 
     if (@left_edge + 60.0) <= ball_x && (@right_edge + 60.0) >= ball_x
       if (@top_edge - 5) <= ball_y && (@top_edge + 3) >= ball_y
-        return 'top'
+        $angle = 180.0 - $angle
       end
     end
 
@@ -47,17 +47,14 @@ class Windmill
         # I want this to perform the same calculations in ball.rb that hitting the sides of the field does,
         # But that keeps glitching. I'll work on it.
         $angle = 300.0
-        return 'left'
       end
+
       if ball_x >= ((@right_edge - 50) + @y_delta * 50) && ball_x <= ((@right_edge + 25) + @y_delta * 50)
         # I want this to perform the same calculations in ball.rb that hitting the sides of the field does,
         # But that keeps glitching. I'll work on it.
         $angle = 120.0
-        return 'right'
       end
     end
-
-    return false
   end
 
   def draw

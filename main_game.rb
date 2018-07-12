@@ -1,132 +1,64 @@
+# Require GOSU
 require 'gosu'
-require_relative 'ball'
-require_relative 'arrow'
-require_relative 'hole'
-require_relative 'windmill'
-require_relative 'pacman'
+# Require Levels
+require_relative 'levels/level_01'
+require_relative 'levels/level_02'
+# Require Objects
+require_relative 'objects/ball'
+require_relative 'objects/arrow'
+require_relative 'objects/hole'
+require_relative 'objects/windmill'
+require_relative 'objects/pacman'
+require_relative 'objects/river'
+require_relative 'objects/bridge'
+# Require Modes
+require_relative 'modes/aim_mode'
+require_relative 'modes/charge_mode'
+require_relative 'modes/complete_mode'
+require_relative 'modes/fire_mode'
+require_relative 'modes/god_mode'
+require_relative 'modes/xray_mode'
 
-class Game_Window < Gosu::Window
-
-
+class Main_game < Gosu::Window
   def initialize
-    @frame = 0
-    @charge_factor = 2
-    @window_width = 640
-    @window_height = 480
-    super @window_width, @window_height
+    super 640, 480
     self.caption = 'Fiserv Putt Putt'
-    @font = Gosu::Font.new(20)
-    @background_image = Gosu::Image.new('resources/images/3d_green.png', :tileable => true)
-    @ball = Ball.new
-    @ball.place(560, 440)
-    @arrow = Arrow.new
-    @arrow.place(560, 440)
-    @hole = Hole.new(100,140)
-    @windmill = Windmill.new(390, 150)
-    @pacman = Pacman.new(140, 330)
-    # This can be title, aim, charge, fire, xray, GOD, complete
-    @game_stage = 'aim'
+    @background_image = Gosu::Image.new('resources/images/title_field.png', :tileable => true)
+    @play_button = Gosu::Image.new('resources/images/play_button.png')
+    @inst_button = Gosu::Image.new('resources/images/instruction_button.png')
+    $level_number = 0
+    @button_selected = 0
   end
 
   def update
-    @frame += 1
-    @frame %= 60
-    if @game_stage == 'aim'
-      if Gosu.button_down? Gosu::KB_LEFT or Gosu::button_down? Gosu::GP_LEFT
-        @arrow.turn_left
-      end
-      if Gosu.button_down? Gosu::KB_RIGHT or Gosu::button_down? Gosu::GP_RIGHT
-        @arrow.turn_right
-      end
-      if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
-        @game_stage = 'charge'
-      end
-      if Gosu.button_down? Gosu::KB_X
-        @game_stage = 'xray'
-      end
-      if Gosu.button_down? Gosu::KB_Q
-        @game_stage = 'GOD'
-      end
+    if Gosu.button_down? Gosu::KB_UP or Gosu.button_down? Gosu::KB_DOWN
+      @button_selected += 1
+      @button_selected %= 2
+      sleep(0.25)
     end
-    if @game_stage == 'charge'
-      if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
-        if @frame%@charge_factor == 0
-          @ball.add_power
-        end
+    if @button_selected == 0
+      @play_button = Gosu::Image.new('resources/images/play_button_highlighted.png')
+      @inst_button = Gosu::Image.new('resources/images/instruction_button.png')
+    else
+      @play_button = Gosu::Image.new('resources/images/play_button.png')
+      @inst_button = Gosu::Image.new('resources/images/instruction_button_highlighted.png')
+    end
+
+    if Gosu.button_down? Gosu::KB_RETURN
+      if @button_selected == 0
+        close
+        $level_number += 1
+        Level_01.new.show
       else
-        @ball.set_angle(@arrow.angle)
-        @game_stage = 'fire'
-      end
-    end
-    if @game_stage == 'fire'
-      @ball.move(@window_width, @window_height, @windmill.x, @windmill.y, @pacman.x, @pacman.y)
-      if @ball.power == 0
-        @ball.add_stroke
-        @arrow.place(@ball.x, @ball.y)
-        @game_stage = 'aim'
-      end
-      if Gosu.distance(@ball.x, @ball.y, @hole.x, @hole.y) < 10
-        @game_stage = 'complete'
-      end
-    end
-    if @game_stage == 'complete'
-      @windmill.go_invisible
-      @pacman.go_invisible
-      @arrow.go_invisible
-      # Do something here before the game restarts, like, add an entry to the
-      # 'leaderboard' and then show the leaderboard until a button is pressed
-      if Gosu.button_down? Gosu::KB_F
-        initialize
-      end
-    end
-    if @game_stage == 'xray'
-      @windmill.ghost_mode
-      @pacman.ghost_mode
-      @ball.ghost_mode
-      if !Gosu.button_down? Gosu::KB_X
-        @windmill.normal_mode
-        @pacman.normal_mode
-        @ball.normal_mode
-        @game_stage = 'aim'
-      end
-    end
-    if @game_stage == 'GOD'
-      puts "X Value: #{@ball.x}"
-      puts "Y Value: #{@ball.y}"
-      if Gosu.button_down? Gosu::KB_LEFT
-        @ball.place((@ball.x - 5.0), @ball.y)
-      end
-      if Gosu.button_down? Gosu::KB_RIGHT
-        @ball.place((@ball.x + 5.0), @ball.y)
-      end
-      if Gosu.button_down? Gosu::KB_UP
-        @ball.place(@ball.x, (@ball.y - 5.0))
-      end
-      if Gosu.button_down? Gosu::KB_DOWN
-        @ball.place(@ball.x, (@ball.y + 5.0))
-      end
-      if Gosu.button_down? Gosu::KB_W
-        @arrow.place(@ball.x, @ball.y)
-        @game_stage = 'aim'
+        puts 'INSTRUCTIONS'
       end
     end
   end
 
   def draw
     @background_image.draw(0, 0, 0)
-    @ball.draw
-    @arrow.draw
-    @hole.draw
-    @windmill.draw
-    @pacman.draw
-    if @game_stage == 'complete'
-      @font.draw("Thanks for playing!", 310, 220, 0, 1.0, 1.0, Gosu::Color::BLACK)
-      @font.draw("Your score was: #{@ball.score}", 310, 240, 0, 1.0, 1.0, Gosu::Color::BLACK)
-      @font.draw("Press 'F' key to play again.", 310, 280, 0, 1.0, 1.0, Gosu::Color::BLACK)
-    else
-      @font.draw("Score: #{@ball.score}", 40, 10, 0, 1.0, 1.0, Gosu::Color::BLACK)
-      @font.draw("Power: #{@ball.power}", 520, 10, 0, 1.0, 1.0, Gosu::Color::RED)
-    end
+    @play_button.draw(220, 260, 1)
+    @inst_button.draw(220, 340, 1)
   end
 
   def button_down(id)
@@ -136,6 +68,7 @@ class Game_Window < Gosu::Window
       super
     end
   end
+
 end
 
-Game_Window.new.show
+Main_game.new.show
