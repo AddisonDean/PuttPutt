@@ -1,5 +1,4 @@
-class Level_01 < Gosu::Window
-
+class Level < Gosu::Window
   def initialize
     # Create window, apply background, create frame counter
     $window_width = 640
@@ -8,7 +7,6 @@ class Level_01 < Gosu::Window
     super $window_width, $window_height
     self.caption = 'Fiserv Putt Putt'
     $frame = 0
-    $background_image = Gosu::Image.new('resources/images/green_field.png', :tileable => true)
 
     # Create all standard objects and place
     $ball = Ball.new
@@ -16,11 +14,6 @@ class Level_01 < Gosu::Window
     $arrow = Arrow.new
     $arrow.place(560, 440)
     $hole = Hole.new(100,140)
-
-    # Create special objects and place
-    $windmill = Windmill.new(390, 150)
-    $pacman = Pacman.new(140, 330)
-    $special_objects = [$windmill, $pacman]
 
     # Set initial mode, 'aim'
     $game_stage = 'aim'
@@ -30,22 +23,26 @@ class Level_01 < Gosu::Window
     $frame += 1
     $frame %= 60
     if $game_stage == 'aim'
-      Aim_mode.activated
+      Modes.aim_mode
     end
     if $game_stage == 'charge'
-      Charge_mode.activated($frame)
+      Modes.charge_mode($frame)
     end
     if $game_stage == 'fire'
-      Fire_mode.activated
+      Modes.fire_mode
     end
     if $game_stage == 'complete'
-      Complete_mode.activated
+      Modes.complete_mode
     end
     if $game_stage == 'xray'
-      Xray_mode.activated
+      Modes.xray_mode
     end
     if $game_stage == 'GOD'
-      God_mode.activated
+      Modes.god_mode
+    end
+
+    if Gosu.button_down? Gosu::KB_ESCAPE
+      exit(0)
     end
   end
 
@@ -54,8 +51,9 @@ class Level_01 < Gosu::Window
     $ball.draw
     $arrow.draw
     $hole.draw
-    $windmill.draw
-    $pacman.draw
+    $special_objects.each do |obj|
+      obj.draw
+    end
     if $game_stage == 'complete'
       $font.draw("Thanks for playing!", 310, 220, 0, 1.0, 1.0, Gosu::Color::BLACK)
       $font.draw("Your score was: #{$ball.score}", 310, 240, 0, 1.0, 1.0, Gosu::Color::BLACK)
@@ -65,14 +63,4 @@ class Level_01 < Gosu::Window
       $font.draw("Power: #{$ball.power}", 520, 10, 0, 1.0, 1.0, Gosu::Color::RED)
     end
   end
-
-  def button_down(id)
-    if id == Gosu::KB_ESCAPE
-      close
-    else
-      super
-    end
-  end
 end
-
-

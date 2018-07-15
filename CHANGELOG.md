@@ -16,3 +16,4 @@ No releases at present.
 | 0.0.5  | 7/12/18  | AddisonDean | `ADD` <br> - CHANGELOG <br> `UPDATE` <br> - README |
 | 0.0.6  | 7/12/18  | AddisonDean | `UPDATE` <br> - README |
 | 0.0.7  | 7/12/18  | AddisonDean | `UPDATE` <br> - CHANGELOG |
+| 0.0.8  | 7/15/18  | AddisonDean | Refactoring, some bug fixes |

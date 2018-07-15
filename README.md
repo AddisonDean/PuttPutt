@@ -5,7 +5,10 @@ Putt-Putt is a digital rendering of the classic game, written in Ruby.
 ## Installation
 
 ### Requirements
-* Windows
+* Tested on:
+    * Windows - 7 6.1
+    * MacOS - Darwin 17.2.0
+    * Linux - Mint 18.3 Sylvia
 * Ruby 2.4.1+
 * [gosu](https://rubygems.org/gems/gosu/versions/0.10.8)
 

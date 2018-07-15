@@ -1,8 +1,8 @@
 # Require GOSU
 require 'gosu'
 # Require Levels
-require_relative 'levels/level_01'
-require_relative 'levels/level_02'
+require_relative 'levels/level'
+require_relative 'levels/levels'
 # Require Objects
 require_relative 'objects/ball'
 require_relative 'objects/arrow'
@@ -12,12 +12,7 @@ require_relative 'objects/pacman'
 require_relative 'objects/river'
 require_relative 'objects/bridge'
 # Require Modes
-require_relative 'modes/aim_mode'
-require_relative 'modes/charge_mode'
-require_relative 'modes/complete_mode'
-require_relative 'modes/fire_mode'
-require_relative 'modes/god_mode'
-require_relative 'modes/xray_mode'
+require_relative 'modes/modes'
 
 class Main_game < Gosu::Window
   def initialize
@@ -27,6 +22,7 @@ class Main_game < Gosu::Window
     @play_button = Gosu::Image.new('resources/images/play_button.png')
     @inst_button = Gosu::Image.new('resources/images/instruction_button.png')
     $level_number = 0
+    $level_list = [Levels::Level_01, Levels::Level_02]
     @button_selected = 0
   end
 
@@ -46,12 +42,15 @@ class Main_game < Gosu::Window
 
     if Gosu.button_down? Gosu::KB_RETURN
       if @button_selected == 0
-        close
         $level_number += 1
-        Level_01.new.show
+        Levels::Level_01.new.show
       else
         puts 'INSTRUCTIONS'
       end
+    end
+
+    if Gosu.button_down? Gosu::KB_ESCAPE
+      exit(0)
     end
   end
 
@@ -59,14 +58,6 @@ class Main_game < Gosu::Window
     @background_image.draw(0, 0, 0)
     @play_button.draw(220, 260, 1)
     @inst_button.draw(220, 340, 1)
-  end
-
-  def button_down(id)
-    if id == Gosu::KB_ESCAPE
-      close
-    else
-      super
-    end
   end
 
 end
