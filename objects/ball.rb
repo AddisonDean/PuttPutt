@@ -1,6 +1,7 @@
 class Ball
   attr_reader :power
   attr_reader :score
+  attr_accessor :fallen
   attr_reader :x
   attr_reader :y
 
@@ -11,6 +12,8 @@ class Ball
     @score = 0
     $angle = 0.0
     @gm = false
+    @add = true
+    @fallen = false
   end
 
   def place(x, y)
@@ -31,45 +34,58 @@ class Ball
     @image = Gosu::Image.new('resources/images/ball.png')
   end
 
-  def move(window_width, window_height)
-    # You should make this an even factor of 1 (.1, .2, .25, .5, 1)
-    increment = 1
-    velocity_scale = 10
-    distance = increment * velocity_scale
-    if @power > 0
-      @x += Gosu.offset_x($angle, distance)
-      @y += Gosu.offset_y($angle, distance)
-      @y_delta = 1.0 - ((@y - 100.0)/ 380.0)
+  def set_fallen
+    @power = 1
+    @fallen = true
+  end
 
+  def move(window_width, window_height)
+    increment = 1
+    total_time = @initial_power / increment
+    current_time = @initial_power - (@initial_power - @power)
+    velocity = ((current_time / (total_time * 1.0)) * 6 + 1).round(0)
+    if @power > 0
+      next_x_pos = @x + Gosu.offset_x($angle, velocity)
+      next_y_pos = @y + Gosu.offset_y($angle, velocity)
       # Check for collisions with all special objects
       $special_objects.each do |obj|
-        obj.detect_collision(obj.x, obj.y, @x, @y)
+        obj.detect_collision(obj.x, obj.y, next_x_pos, next_y_pos)
       end
 
-      # If the ball hits the left or right of the field
-      if @x <= (@y_delta * 50.0) + 15.0 or @x >= (window_width - 15.0) - (@y_delta * 50)
-        $angle = 360.0 - $angle
+      if $left_wall.collision(next_x_pos, next_y_pos, 50)
+        eval($left_wall.react)
       end
 
-      # If the ball hits the top of the field
-      if @y <= 100
-        $angle = 180.0 - $angle
+      if $right_wall.collision(next_x_pos, next_y_pos, 50)
+        eval($right_wall.react)
       end
 
-      # If the ball hits the bottom of the field
-      if @y >= window_height - 15
-        $angle = 180.0 - $angle
+      if $top_border.collision(next_x_pos, next_y_pos, 5)
+        eval($top_border.react)
       end
+
+      if $bottom_border.collision(next_x_pos, next_y_pos, 5)
+        eval($bottom_border.react)
+      end
+
+      @x = next_x_pos.round(1)
+      @y = next_y_pos.round(1)
       @power -= increment
     end
   end
 
+
   def add_power
-    @power += 5
-    @power %= 100
+    @add ? @power += 10 : @power -= 10
+    @add = false if @power == 250
+    @add = true if @power == 0
+    # delete this
+    # @power = 250.0
+    @initial_power = @power
   end
 
   def add_stroke
+    @add = true
     @score += 1
   end
 

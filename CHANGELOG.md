@@ -17,3 +17,4 @@ No releases at present.
 | 0.0.6  | 7/12/18  | AddisonDean | `UPDATE` <br> - README |
 | 0.0.7  | 7/12/18  | AddisonDean | `UPDATE` <br> - CHANGELOG |
 | 0.0.8  | 7/15/18  | AddisonDean | Refactoring, some bug fixes |
+| 0.0.9  | 7/26/18  | AddisonDean | Improved OO, look and feel, beginning to incorporate Margo. |

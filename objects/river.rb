@@ -5,15 +5,15 @@ class River
   def initialize(x, y)
     @x, @y = x, y
     @image = Gosu::Image.new('resources/images/hell_river.png')
-  end
-
-  def calculate(x, y)
-    @left_edge = x - 60.0                     #  |            |
-    @right_edge = x + 35.0                    #  |  (bottom)  |
-    # top edge of river below bridge          #  | ---------- |
-    @top_edge = y + 50.0                      #  | ---------- |
-    # bottom edge of river above bridge       #  |   (top)    |
-    @bottom_edge = y + 85.0                   #  |            |
+    bottom_left_pt = Margo::Point.new(x - 75.0, y + 190.0)
+    bottom_right_pt = Margo::Point.new(x + 80.0, y + 190.0)
+    top_left_pt = Margo::Point.new(x - 75.0, y - 190.0)
+    # slight x difference to compensate for margo error. TODO: Fix Margo!
+    top_right_pt = Margo::Point.new(x + 100.0, y - 190.0)
+    @left_edge = Margo::Line.new(top_left_pt, bottom_left_pt)
+    @left_edge.set_react_cmd("$ball.set_fallen")
+    @right_edge = Margo::Line.new(top_right_pt, bottom_right_pt)
+    @right_edge.set_react_cmd("$ball.set_fallen")
   end
 
   def ghost_mode
@@ -29,33 +29,18 @@ class River
   end
 
   def detect_collision(x, y, ball_x, ball_y)
-    calculate(x, y)
-    # if @left_edge <= ball_x && @right_edge >= ball_x
-    #  if (@bottom_edge - 3) <= ball_y && (@bottom_edge + 3) >= ball_y
-    #    $angle = 180.0 - $angle
-    #  end
-    # end
+    if $ball.fallen
 
-    # if (@left_edge + 20.0) <= ball_x && (@right_edge + 20.0) >= ball_x
-    #  if (@top_edge - 5) <= ball_y && (@top_edge + 3) >= ball_y
-    #    $angle = 180.0 - $angle
-    #  end
-    # end
+    end
+    if @left_edge.collision(ball_x, ball_y, 5)
+      puts 'success'
+      eval(@left_edge.react)
+    end
 
-    # if ball_y <= @bottom_edge && ball_y >= @top_edge
-    #  @y_delta = 1.0 - ((ball_y - 380.0)/ 35.0)
-    #  if ball_x >= ((@left_edge - 10) + @y_delta * 20) && ball_x <= ((@left_edge + 50) + @y_delta * 20)
-    #    # I want this to perform the same calculations in ball.rb that hitting the sides of the field does,
-    #    # But that keeps glitching. I'll work on it.
-    #    $angle = 290.0
-    #  end
-    #  if ball_x >= ((@right_edge - 50) + @y_delta * 20) && ball_x <= ((@right_edge + 10) + @y_delta * 20)
-    #    # I want this to perform the same calculations in ball.rb that hitting the sides of the field does,
-    #    # But that keeps glitching. I'll work on it.
-    #    $angle = 110.0
-    #  end
-    # end
-
+    if @right_edge.collision(ball_x, ball_y, 5)
+      puts 'success'
+      eval(@right_edge.react)
+    end
   end
 
   def draw

@@ -1,5 +1,6 @@
-# Require GOSU
+# Require GOSU, Margo
 require 'gosu'
+require 'margo'
 # Require Levels
 require_relative 'levels/level'
 require_relative 'levels/levels'
@@ -22,7 +23,9 @@ class Main_game < Gosu::Window
     @play_button = Gosu::Image.new('resources/images/play_button.png')
     @inst_button = Gosu::Image.new('resources/images/instruction_button.png')
     $level_number = 0
-    $level_list = [Levels::Level_01, Levels::Level_02]
+    # While working on look and feel, only one level.
+    # $level_list = [Levels::Level_01, Levels::Level_02]
+    $level_list = [Levels::Level_01]
     @button_selected = 0
   end
 

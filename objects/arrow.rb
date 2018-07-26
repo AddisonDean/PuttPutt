@@ -13,17 +13,21 @@ class Arrow
   end
 
   def turn_left
-    @angle -= 3
+    @angle -= 2
     @angle %= 360
   end
 
   def turn_right
-    @angle += 3
+    @angle += 2
     @angle %= 360
   end
 
   def go_invisible
     @image = Gosu::Image.new('resources/images/blank.png')
+  end
+
+  def go_visible
+    @image = Gosu::Image.new('resources/images/arrow.png')
   end
 
   def draw

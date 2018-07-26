@@ -18,9 +18,9 @@ class Modes
   end
 
   def self.charge_mode(frame_count)
-    @charge_factor = 2
+    frame_limiter = 3
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
-      if frame_count%@charge_factor == 0
+      if frame_count%frame_limiter == 0
         $ball.add_power
       end
     else
@@ -51,10 +51,21 @@ class Modes
     end
   end
 
-  def self.fire_mode
-    $ball.move($window_width, $window_height)
+  def self.fire_mode(frame_count)
+    $arrow.go_invisible
+    frame_limiter = 1
+    # move 60/sec.
+    if frame_count%frame_limiter == 0
+      $ball.move($window_width, $window_height)
+    end
     if $ball.power == 0
+      if $ball.fallen
+        $ball.place(560, 440)
+        $ball.fallen = false
+      end
+      sleep 0.30
       $arrow.place($ball.x, $ball.y)
+      $arrow.go_visible
       $game_stage = 'aim'
     end
     if Gosu.distance($ball.x, $ball.y, $hole.x, $hole.y) < 10
@@ -66,16 +77,16 @@ class Modes
     puts "X Value: #{$ball.x}"
     puts "Y Value: #{$ball.y}"
     if Gosu.button_down? Gosu::KB_LEFT
-      $ball.place(($ball.x - 5.0), $ball.y)
+      $ball.place(($ball.x - 1.0), $ball.y)
     end
     if Gosu.button_down? Gosu::KB_RIGHT
-      $ball.place(($ball.x + 5.0), $ball.y)
+      $ball.place(($ball.x + 1.0), $ball.y)
     end
     if Gosu.button_down? Gosu::KB_UP
-      $ball.place($ball.x, ($ball.y - 5.0))
+      $ball.place($ball.x, ($ball.y - 1.0))
     end
     if Gosu.button_down? Gosu::KB_DOWN
-      $ball.place($ball.x, ($ball.y + 5.0))
+      $ball.place($ball.x, ($ball.y + 1.0))
     end
     if Gosu.button_down? Gosu::KB_W
       $arrow.place($ball.x, $ball.y)

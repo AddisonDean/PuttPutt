@@ -8,6 +8,27 @@ class Level < Gosu::Window
     self.caption = 'Fiserv Putt Putt'
     $frame = 0
 
+    # Set up borders of play area within window
+    # Top border
+    @pt_top_left = Margo::Point.new(50, 100)
+    @pt_top_right = Margo::Point.new(590, 100)
+    $top_border = Margo::Line.new(@pt_top_left, @pt_top_right)
+    $top_border.set_react_cmd("$angle = 180.0 - $angle")
+
+    # Bottom border
+    @pt_bottom_left = Margo::Point.new(0, 479)
+    @pt_bottom_right = Margo::Point.new(639, 479)
+    $bottom_border = Margo::Line.new(@pt_bottom_left, @pt_bottom_right)
+    $bottom_border.set_react_cmd("$angle = 180.0 - $angle")
+
+    # Left Wall (angled)
+    $left_wall = Margo::Line.new(@pt_bottom_left, @pt_top_left)
+    $left_wall.set_react_cmd("$angle = 360.0 - $angle")
+
+    # Right Wall (angled)
+    $right_wall = Margo::Line.new(@pt_bottom_right, @pt_top_right)
+    $right_wall.set_react_cmd("$angle = 360.0 - $angle")
+
     # Create all standard objects and place
     $ball = Ball.new
     $ball.place(560, 440)
@@ -29,7 +50,7 @@ class Level < Gosu::Window
       Modes.charge_mode($frame)
     end
     if $game_stage == 'fire'
-      Modes.fire_mode
+      Modes.fire_mode($frame)
     end
     if $game_stage == 'complete'
       Modes.complete_mode
@@ -60,7 +81,7 @@ class Level < Gosu::Window
       $font.draw("Press 'F' key to play next level.", 310, 280, 0, 1.0, 1.0, Gosu::Color::BLACK)
     else
       $font.draw("Score: #{$ball.score}", 40, 10, 0, 1.0, 1.0, Gosu::Color::BLACK)
-      $font.draw("Power: #{$ball.power}", 520, 10, 0, 1.0, 1.0, Gosu::Color::RED)
+      $font.draw("Power: #{$ball.power.round(0) / 20}", 520, 10, 0, 1.0, 1.0, Gosu::Color::RED)
     end
   end
 end
