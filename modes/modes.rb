@@ -22,6 +22,7 @@ class Modes
     if Gosu.button_down? Gosu::KB_UP or Gosu::button_down? Gosu::GP_BUTTON_0
       if frame_count%frame_limiter == 0
         $ball.add_power
+        $gauge.determine_power($ball.power)
       end
     else
       $ball.set_angle($arrow.angle)

@@ -35,6 +35,7 @@ class Level < Gosu::Window
     $arrow = Arrow.new
     $arrow.place(560, 440)
     $hole = Hole.new(100,140)
+    $gauge = Gauge.new(480, 10)
 
     # Set initial mode, 'aim'
     $game_stage = 'aim'
@@ -81,7 +82,7 @@ class Level < Gosu::Window
       $font.draw("Press 'F' key to play next level.", 310, 280, 0, 1.0, 1.0, Gosu::Color::BLACK)
     else
       $font.draw("Score: #{$ball.score}", 40, 10, 0, 1.0, 1.0, Gosu::Color::BLACK)
-      $font.draw("Power: #{$ball.power.round(0) / 20}", 520, 10, 0, 1.0, 1.0, Gosu::Color::RED)
+      $gauge.draw
     end
   end
 end
